@@ -1,0 +1,36 @@
+---
+title: "Tidy data analysis for demography using R"
+author: Rob J Hyndman
+date: 26 June 2024
+titlegraphic: bg-06.png
+toc: true
+abstract: I will introduce the vital package which allows analysis of demographic data using tidy tools. The package uses a variation of tsibble objects as the main data class, so all of the infrastructure available for tsibble and tibble objects can also be used with vital objects. Data may include births, deaths, mortality, fertility, population and migration data. Functions for plotting, smoothing, modelling and forecasting data are included. Models include the classical Lee-Carter model as well as functional data models. Future plans include replicating all of the models available in the demography and StMoMo packages. The package is available at https://pkg.robjhyndman.com/vital/.
+format:
+  presentation-beamer:
+    keep-tex: true
+    template-partials:
+        - before-title.tex
+---
+
+```{r}
+#| label: load-packages
+library(knitr)
+library(ggplot2)
+library(dplyr)
+```
+
+
+## Plans
+
+- Introduce tsibble objects
+- Introduce vital objects
+- HMD data into vital objects
+- plots, life tables, and other description statistics
+- Benchmark models (NAIVE AND FMEAN)
+- Lee-Carter and FDM
+- Coherent FDM (generalizing Lee-Li)
+- Future plans
+    - Stochastic population forecasting (as per Booth-Hyndman 2008)
+    - StMoMo
+    - other tools in the demography package
+    - demography package to be maintained but not developed
