@@ -10,27 +10,374 @@ format:
     keep-tex: true
     template-partials:
         - before-title.tex
+execute:
+  cache: true
+  echo: true
+  warning: false
+  message: false
 ---
 
 ```{r}
 #| label: load-packages
+#| echo: false
 library(knitr)
 library(ggplot2)
 library(dplyr)
+library(vital)
+aus <- aus_mortality |>
+  mutate(State = Code) |>
+  as_vital(index = Year,
+    key = c(Age, Sex, State),
+    .age = "Age",
+    .sex = "Sex",
+    .deaths = "Deaths",
+    .population = "Exposure"
+  ) |>
+  arrange(desc(State), Year, Age, Sex) |>
+  select(-Code) |>
+  filter(Sex != "total", !(State %in% c("ACT","ACTOT","NT")))
+
+# Colours to be viridis for continuous scales and Okabe for discrete scales
+options(
+  ggplot2.continuous.colour="viridis",
+  ggplot2.continuous.fill = "viridis",
+  ggplot2.discrete.colour = c("#D55E00", "#0072B2","#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442"),
+  ggplot2.discrete.fill = c("#D55E00", "#0072B2","#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442")
+)
 ```
 
 
-## Plans
+# Vital objects
 
-- Introduce tsibble objects
-- Introduce vital objects
-- HMD data into vital objects
-- plots, life tables, and other description statistics
-- Benchmark models (NAIVE AND FMEAN)
-- Lee-Carter and FDM
-- Coherent FDM (generalizing Lee-Li)
-- Future plans
-    - Stochastic population forecasting (as per Booth-Hyndman 2008)
-    - StMoMo
-    - other tools in the demography package
-    - demography package to be maintained but not developed
+## tibble objects
+\placefig{8.3}{0}{width=2.5cm}{tibble}
+\placefig{11.1}{0}{width=2.5cm}{tidyverse}
+
+\alert{Australian Deaths 1901--2020}
+
+\fontsize{10}{10.5}\sf
+
+```{r}
+#| label: tibble
+tibble::as_tibble(aus) |>
+  arrange(desc(State), Year, Age, Sex)
+```
+
+## tsibble objects
+\placefig{8.3}{0}{width=2.5cm}{tsibble}
+\alert{Australian Deaths 1901--2020}
+
+\fontsize{10}{10.5}\sf
+
+```{r}
+#| label: tsibble
+tsibble::as_tsibble(aus) |>
+  arrange(desc(State), Year, Age, Sex)
+```
+
+\only<2-3>{\begin{textblock}{4}(11.5, 1)
+\fontsize{11}{12}\sf
+\begin{block}{Variables}
+Index:
+  \begin{itemize}
+    \item \texttt{Year}
+  \end{itemize}
+Keys:
+  \begin{itemize}
+    \item \texttt{Age}
+    \item \texttt{Sex}
+    \item \texttt{State}
+  \end{itemize}
+\end{block}
+\end{textblock}}
+
+\only<3>{\begin{textblock}{4}(11.5, 7.1)
+\fontsize{11}{12}\sf
+\begin{alertblock}{}
+Every row must have a unique combination of Index and Keys
+\end{alertblock}
+\end{textblock}
+}
+
+## vital objects
+\placefig{8.3}{0}{width=2.5cm}{vital-hex}
+\alert{Australian Deaths 1901--2020}
+
+\fontsize{10}{10.5}\sf
+
+```{r}
+#| label: vital
+aus
+```
+
+\begin{textblock}{4}(11.5, 1.)
+\fontsize{11}{12}\sf
+\begin{block}{Variables}
+Index:
+  \begin{itemize}
+    \item \texttt{Year}
+  \end{itemize}
+Keys:
+  \begin{itemize}
+    \item \texttt{Age}
+    \item \texttt{Sex}
+    \item \texttt{State}
+  \end{itemize}
+\end{block}
+\end{textblock}
+
+\begin{textblock}{4}(11.5, 7.1)
+\fontsize{11}{12}\sf
+\begin{alertblock}{}
+Every row must have a unique combination of Index and Keys
+\end{alertblock}
+\end{textblock}
+
+\begin{textblock}{4}(11.5, 4.8)
+\fontsize{11}{12}\sf
+\begin{block}{}
+Variables denoting age, sex, deaths, births and population can also be specified.
+\end{block}
+\end{textblock}
+
+# Using the Human Mortality and Fertility Databases
+
+## Human Mortality Database
+
+\begin{textblock}{3.02}(11.98,-0.13)
+\begin{alertblock}{}\hfill
+\textbf{mortality.org}
+\end{alertblock}
+\end{textblock}
+\fullwidth{hmd}
+
+## Human Fertility Database
+
+\begin{textblock}{4.2}(10.8,-0.13)
+\begin{alertblock}{}\hfill
+\textbf{humanfertility.org}
+\end{alertblock}
+\end{textblock}
+\fullwidth{hfd}
+
+
+## HMD imports
+\fontsize{10}{10}\sf
+
+```{r}
+#| eval: false
+norway <- read_hmd(
+  country = "NOR",
+  username = "Nora.Weigh@mymail.com",
+  password = "FF!5xeEFa6"
+)
+norway_births <- read_hmd(
+  country = "NOR",
+  username = "Nora.Weigh@mymail.com",
+  password = "FF!5xeEFa6",
+  variables = "Births"
+)
+```
+
+\fontsize{14}{15}\sf\vspace*{-0.2cm}
+
+* Uses `HMDHFDplus` package to handle the downloads.
+* Default variables: `Deaths`, `Exposures`, `Population`, `Mx`
+* Only 1x1 data supported.
+* `read_hmd_files()` and `read_hfd_files()` allow reading of downloaded files.
+
+
+# Plots
+## Rainbow plots
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: plot0
+#| fig-height: 4.3
+aus |> autoplot(Mortality) + scale_y_log10()
+```
+
+## Rainbow plots
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: plot1
+#| fig-height: 4.3
+aus |> filter(State == "VIC") |> autoplot(Mortality) + scale_y_log10()
+```
+
+## Rainbow plots
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: plot2
+#| fig-height: 3.5
+aus |> filter(State == "VIC") |>
+  mutate(Exposure = if_else(Sex == "female", -Exposure, Exposure)) |>
+  autoplot(Exposure) +
+  facet_grid(State ~ Sex, scales = "free_x") + coord_flip()
+```
+
+# Life tables and life expectancy
+
+## Life tables
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: life-tables
+life_table(aus)
+```
+
+## Life expectancy
+
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: life-expectancy
+life_expectancy(aus)
+```
+
+
+## Life expectancy
+
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: life-expectancy2
+#| fig-height: 3.5
+life_expectancy(aus) |>
+  ggplot(aes(x = Year, y = ex, colour = State)) +
+  geom_line(linewidth = 1) +
+  facet_grid(. ~ Sex)
+```
+
+# Mortality models
+
+## Benchmark models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: benchmarks
+fit <- aus |>
+  model(
+    naive = FNAIVE(Mortality),
+    mean = FMEAN(Mortality)
+  )
+fit
+```
+
+## Benchmark models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: benchmarks2
+fit |>
+  filter(Sex == "female", State == "NSW") |>
+  select(mean) |>
+  report()
+```
+
+## Benchmark models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: benchmarks3
+#| fig-height: 3.7
+fit |>
+  select(mean) |>
+  autoplot() + scale_y_log10()
+```
+
+## Lee-Carter models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: lc1
+fit <- aus |>
+  model(
+    naive = FNAIVE(Mortality),
+    mean = FMEAN(Mortality),
+    lc = LC(log(Mortality))
+  )
+fit
+```
+
+## Lee-Carter models
+\fontsize{10}{10}\sf
+
+```{r}
+#| label: lc2
+fit |>
+  filter(Sex == "female", State == "NSW") |>
+  select(lc) |>
+  report()
+```
+
+## Lee-Carter models
+\fontsize{10}{9}\sf\vspace*{-0.2cm}
+
+```
+Age functions
+# A tibble: 101 × 3
+    Age    ax     bx
+  <int> <dbl>  <dbl>
+1     0 -4.07 0.0155
+2     1 -6.20 0.0221
+3     2 -6.89 0.0199
+# i 98 more rows
+
+Time coefficients
+# A tsibble: 120 x 2 [1Y]
+   Year    kt
+  <int> <dbl>
+1  1901 109.
+2  1902 111.
+3  1903 108.
+# i 117 more rows
+
+Time series model: RW w/ drift
+
+Variance explained: 86.61%
+```
+
+## Lee-Carter models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: lc3
+#| fig-height: 3.7
+fit |>
+  filter(State == "NSW") |>
+  select(lc) |>
+  autoplot()
+```
+
+## Lee-Carter models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: lc4
+fit |> select(lc) |> age_components()
+```
+
+
+## Lee-Carter models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: lc5
+fit |> select(lc) |> time_components()
+```
+
+
+## Functional data models
+
+## Coherent FDM (generalizing Lee-Li)
+
+# Future plans
+## Future plans
+
+- Stochastic population forecasting (as per Booth-Hyndman 2008)
+- StMoMo
+- other tools in the demography package
+- demography package to be maintained but not developed
