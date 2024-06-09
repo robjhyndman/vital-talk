@@ -24,6 +24,7 @@ library(knitr)
 library(ggplot2)
 library(dplyr)
 library(vital)
+library(tsibble)
 aus <- aus_mortality |>
   mutate(State = Code) |>
   as_vital(index = Year,
@@ -55,10 +56,11 @@ options(
 
 \alert{Australian Deaths 1901--2020}
 
-\fontsize{10}{10.5}\sf
+\fontsize{10}{10}\sf
 
 ```{r}
 #| label: tibble
+#| echo: false
 tibble::as_tibble(aus) |>
   arrange(desc(State), Year, Age, Sex)
 ```
@@ -67,10 +69,11 @@ tibble::as_tibble(aus) |>
 \placefig{8.3}{0}{width=2.5cm}{tsibble}
 \alert{Australian Deaths 1901--2020}
 
-\fontsize{10}{10.5}\sf
+\fontsize{10}{10}\sf
 
 ```{r}
 #| label: tsibble
+#| echo: false
 tsibble::as_tsibble(aus) |>
   arrange(desc(State), Year, Age, Sex)
 ```
@@ -91,11 +94,11 @@ Keys:
 \end{block}
 \end{textblock}}
 
-\only<3>{\begin{textblock}{4}(11.5, 7.1)
+\only<3>{\begin{textblock}{4}(11.5, 4.73)
 \fontsize{11}{12}\sf
-\begin{alertblock}{}
+\begin{block}{}
 Every row must have a unique combination of Index and Keys
-\end{alertblock}
+\end{block}
 \end{textblock}
 }
 
@@ -103,7 +106,7 @@ Every row must have a unique combination of Index and Keys
 \placefig{8.3}{0}{width=2.5cm}{vital-hex}
 \alert{Australian Deaths 1901--2020}
 
-\fontsize{10}{10.5}\sf
+\fontsize{10}{10}\sf
 
 ```{r}
 #| label: vital
@@ -126,19 +129,41 @@ Keys:
 \end{block}
 \end{textblock}
 
-\begin{textblock}{4}(11.5, 7.1)
+\begin{textblock}{4}(11.5, 4.73)
 \fontsize{11}{12}\sf
-\begin{alertblock}{}
+\begin{block}{}
 Every row must have a unique combination of Index and Keys
-\end{alertblock}
+\end{block}
 \end{textblock}
 
-\begin{textblock}{4}(11.5, 4.8)
+\begin{textblock}{4}(11.5, 6.5)
 \fontsize{11}{12}\sf
 \begin{block}{}
 Variables denoting age, sex, deaths, births and population can also be specified.
 \end{block}
 \end{textblock}
+
+## vital objects
+\fontsize{11}{13}\sf
+
+```{r}
+#| label: vital_index
+index_var(aus)
+```
+
+\vspace*{0.4cm}
+
+```{r}
+#| label: vital_keys
+key_vars(aus)
+```
+
+\vspace*{0.4cm}
+
+```{r}
+#| label: vital_vars
+vital_vars(aus)
+```
 
 # Using the Human Mortality and Fertility Databases
 
@@ -185,6 +210,14 @@ norway_births <- read_hmd(
 * Default variables: `Deaths`, `Exposures`, `Population`, `Mx`
 * Only 1x1 data supported.
 * `read_hmd_files()` and `read_hfd_files()` allow reading of downloaded files.
+
+## HMD imports
+\fontsize{11}{11}\sf
+
+```{r}
+#| label: norway_births
+norway_births
+```
 
 
 # Plots
