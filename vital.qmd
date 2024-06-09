@@ -402,8 +402,89 @@ fit |> select(lc) |> age_components()
 fit |> select(lc) |> time_components()
 ```
 
+## Functional data models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: fdm1
+fit <- aus |>
+  model(
+    naive = FNAIVE(Mortality),
+    mean = FMEAN(Mortality),
+    lc = LC(log(Mortality)),
+    hu = FDM(log(Mortality))
+  )
+fit
+```
 
 ## Functional data models
+\fontsize{10}{10}\sf
+
+```{r}
+#| label: fdm2
+fit |>
+  filter(Sex == "female", State == "NSW") |>
+  select(hu) |>
+  report()
+```
+
+## Functional data models
+\fontsize{9}{8.5}\sf\vspace*{-0.2cm}
+
+```
+Coefficients
+# A tsibble: 120 x 8 [1Y]
+   Year  mean beta1  beta2   beta3     beta4   beta5   beta6
+  <int> <dbl> <dbl>  <dbl>   <dbl>     <dbl>   <dbl>   <dbl>
+1  1901     1  11.1 -0.522 -0.0553  0.207    0.358    0.0305
+2  1902     1  11.8 -0.649  0.399   0.856    0.0319   0.422
+3  1903     1  11.5 -0.930 -0.485   0.398    0.399   -0.376
+4  1904     1  11.1 -0.827 -0.214  -0.000305 0.00125 -0.0783
+5  1905     1  10.2 -0.563 -0.105   0.324    0.122    0.0478
+# i 115 more rows
+# i Use `print(n = ...)` to see more rows
+
+Time series models
+   beta1 : ARIMA(0,1,1) w/ drift
+   beta2 : ARIMA(0,2,2)
+   beta3 : ARIMA(1,0,1)
+   beta4 : ARIMA(0,0,2)
+   beta5 : ARIMA(0,0,0)
+   beta6 : ARIMA(2,0,2)
+
+Variance explained
+  91.38 + 1.81 + 0.58 + 0.49 + 0.42 + 0.39 = 95.06%
+```
+
+## Functional data models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: fdm3
+#| fig-height: 3.7
+fit |>
+  filter(State == "NSW") |>
+  select(hu) |>
+  autoplot()
+```
+
+
+## Functional data models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: fdm4
+fit |> select(hu) |> age_components()
+```
+
+## Functional data models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: fdm5
+fit |> select(hu) |> time_components()
+```
+
 
 ## Coherent FDM (generalizing Lee-Li)
 
