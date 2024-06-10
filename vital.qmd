@@ -25,6 +25,7 @@ library(ggplot2)
 library(dplyr)
 library(vital)
 library(tsibble)
+library(kableExtra)
 aus <- aus_mortality |>
   mutate(State = Code) |>
   as_vital(index = Year,
@@ -49,6 +50,32 @@ options(
 
 
 # Vital objects
+
+## Demographic data structures in R packages
+\vspace*{-0.75cm}
+
+```{r}
+#| label: data-classes
+#| echo: false
+tibble::tribble(
+    ~package, ~dataclass,
+    "demography", "demogdata",
+    "StMoMo", "StMoMoData (created by converting a demogdata object)",
+    "StanMoMo", "Lists of matrices",
+    "lifecontingencies", "data.frame",
+    "BayesMortalityPlus", "tibble (that needs to be converted to a matrix for fitting)",
+    "MortalityLaws", "individual vectors",
+    "HMDHFDplus", "data.frame",
+  )  |>
+  kbl(col.names = c("Package", "Data class"),
+    format = "latex",
+    booktabs = TRUE,
+    escape = FALSE
+  ) |>
+  row_spec(0, bold = TRUE, color = c("#c14b14","#000000")) |>
+  column_spec(1, color = "#c14b14")  |>
+  column_spec(2, width = "9cm")
+```
 
 ## tibble objects
 \placefig{8.3}{0}{width=2.5cm}{tibble}
@@ -221,6 +248,15 @@ norway_births
 
 
 # Plots
+
+## Recall: Australian mortality data
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: aus
+aus
+```
+
 ## Rainbow plots
 \fontsize{10}{11}\sf
 
@@ -284,7 +320,28 @@ life_expectancy(aus) |>
   facet_grid(. ~ Sex)
 ```
 
+## Life table calculations
+
+* All available years and ages are included in the tables.
+* $q_x = m_x/(1 + [(1-a_x) m_x])$ as per Chiang (1984).
+* The code has only been tested for data based on single-year age groups.
+* Same code base as for the demography package.
+* Life expectancy with `life_expectancy()` computes $e_x$ with $x=0$ by default, but other values are possible.
+
 # Mortality models
+
+## Mortality models
+
+Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
+\begin{block}{}\vspace*{-0.5cm}
+\begin{align*}
+&\text{Naive model:} & m_{x,t} &= m_{x,t-1} + \varepsilon_{x,t} \\[0.3cm]
+&\text{Mean model:} & m_{x,t} &= \mu_{x} + \varepsilon_{x,t} \\[0.3cm]
+&\text{Lee-Carter model:} & \log(m_{x,t}) &= a_x + k_t b_x + \varepsilon_{x,t} \\[0.3cm]
+&\text{Functional data model:}\hspace*{0.3cm} & \log(m_{x,t}) &= \mu(x) + \sum_{j=1}^J \beta_{j,t} \phi_j(x) + \varepsilon_{t}(x)
+\end{align*}
+where $\varepsilon\sim$ white noise with variance a function of $x$.
+\end{block}
 
 ## Benchmark models
 \fontsize{10}{11}\sf
@@ -320,6 +377,20 @@ fit |>
   select(mean) |>
   autoplot() + scale_y_log10()
 ```
+
+## Lee-Carter models
+
+Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
+\begin{block}{}
+\centerline{$\log(m_{x,t}) = a_x + k_t b_x + \varepsilon_{x,t}$}
+\end{block}
+
+* $a_x$ is the mean log mortality rate at age $x$.
+* $k_t$ tracks mortality changes over time.
+* $b_x$ allows changes in mortality rates to vary by age.
+* $\varepsilon_{x,t}$ is the error term.
+* Estimation of $k_t$ and $b_x$ via principal component analysis.
+* $k_t$ forecast using a random walk with drift = ARIMA(0,1,0)
 
 ## Lee-Carter models
 \fontsize{10}{11}\sf
@@ -402,17 +473,75 @@ fit |> select(lc) |> age_components()
 fit |> select(lc) |> time_components()
 ```
 
+## Lee-Carter forecasts
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: forecast1
+fc <- fit |> forecast(h = 20)
+fc
+```
+
+## Lee-Carter forecasts
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: forecast2
+fc |> filter(.model == "lc")
+```
+
+## Lee-Carter forecasts
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: forecast3
+fc |> filter(State == "NSW", .model == "lc") |> autoplot() + scale_y_log10()
+```
+
+## Functional data models
+
+Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
+
+\begin{block}{}\vspace*{-0.4cm}
+\begin{align*}
+  \log(m_{t,x}) & = s_t(x) + \sigma_t(x)\varepsilon_{t,x}\\
+  s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{t,j}\phi_j(x) + e_t(x)
+\end{align*}
+\end{block}
+
+  * $s_t(x)=$ smoothed version of $y_t(x)$
+  * $\mu(x)=$ mean $s_t(x)$ across years.
+  * $\phi_j(x)$ and $\beta_{t,j}$ estimated using principal component \rlap{analysis.}
+  * $\beta_{1,j},\dots,\beta_{T,j}$ modelled with ARIMA or ARFIMA \rlap{processes.}
+
 ## Functional data models
 \fontsize{10}{11}\sf
 
 ```{r}
 #| label: fdm1
-fit <- aus |>
+sm_aus <- aus |> smooth_mortality(Mortality)
+sm_aus
+```
+
+
+## Functional data models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: fdm2
+sm_aus <- aus |> smooth_mortality(Mortality)
+sm_aus |> filter(State == "NSW", Year == 1980) |> autoplot(Mortality) +
+  geom_line(aes(y = .smooth), col = "blue") + scale_y_log10()
+```
+
+## Functional data models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: fdm3
+fit <- sm_aus |>
   model(
-    naive = FNAIVE(Mortality),
-    mean = FMEAN(Mortality),
-    lc = LC(log(Mortality)),
-    hu = FDM(log(Mortality))
+    hu = FDM(log(.smooth))
   )
 fit
 ```
@@ -421,7 +550,7 @@ fit
 \fontsize{10}{10}\sf
 
 ```{r}
-#| label: fdm2
+#| label: fdm4
 fit |>
   filter(Sex == "female", State == "NSW") |>
   select(hu) |>
@@ -460,7 +589,7 @@ Variance explained
 \fontsize{10}{11}\sf
 
 ```{r}
-#| label: fdm3
+#| label: fdm5
 #| fig-height: 3.7
 fit |>
   filter(State == "NSW") |>
@@ -473,7 +602,7 @@ fit |>
 \fontsize{10}{11}\sf
 
 ```{r}
-#| label: fdm4
+#| label: fdm6
 fit |> select(hu) |> age_components()
 ```
 
@@ -481,12 +610,42 @@ fit |> select(hu) |> age_components()
 \fontsize{10}{11}\sf
 
 ```{r}
-#| label: fdm5
+#| label: fdm7
 fit |> select(hu) |> time_components()
 ```
 
+## Coherent functional models
 
-## Coherent FDM (generalizing Lee-Li)
+\begin{block}{}\vspace*{-0.4cm}
+\begin{align*}
+  y_t(x) & = s_t(x) + \sigma_t(x)\varepsilon_{t,x}\\
+  s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{t,j}\phi_j(x) + e_t(x)
+\end{align*}
+\end{block}
+
+  * $y_t(x)= \log(m_{x,t}^Mm_{x,t}^F)$ and $\log(m_{x,t}^M/m_{x,t}^F)$
+  * $s_t(x)=$ smoothed version of $y_t(x)$
+  * $\mu(x)=$ mean $s_t(x)$ across years.
+  * $\phi_j(x)$ and $\beta_{t,j}$ estimated using principal component \rlap{analysis.}
+  * $\beta_{1,j},\dots,\beta_{T,j}$ modelled with ARIMA for products and ARMA for ratios (to ensure stationary sex-ratios)
+
+## Coherent functional models
+
+```{r}
+#| label: coherentfdm1
+pr <- sm_aus |> make_pr(.smooth)
+pr
+```
+
+## Coherent functional models
+
+```{r}
+#| label: coherentfdm2
+pr <- aus |> make_pr(.smooth)
+fit <- pr |>
+  model(hby = FDM(log(.smooth), coherent = TRUE))
+fit
+```
 
 # Future plans
 ## Future plans
