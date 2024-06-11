@@ -646,16 +646,21 @@ fc |> filter(State == "VIC")  |> autoplot() + scale_y_log10()
 
 # Future plans
 ## Future plans
+\vspace*{-0.2cm}
 
-- Remaining tools from the `demography` package
+- Remaining tools from the `demography` \newline package
 - Stochastic population forecasting (as per Hyndman-Booth, IJF, 2008)
 - All models handled by `StMoMo` package
 - All methods from `MortalityLaws` package
-- `demography` package to be maintained but not developed
 - Suggestions from users
 
-\vspace*{1.5cm}
+\vspace*{0.5cm}
 
 \begin{alertblock}{}
-\centerline{https://pkg.robjhyndman.com/vital/}
+\begin{itemize}\tightlist
+\item \textbf{Slides}: \href{https://robjhyndman.com/mpidr2024}{robjhyndman.com/mpidr2024}
+\item \textbf{Package}: \href{https://pkg.robjhyndman.com/vital/}{pkg.robjhyndman.com/vital/}
+\end{itemize}
 \end{alertblock}
+
+\placefig{11.9}{.1}{width=3.5cm}{vital-hex}
