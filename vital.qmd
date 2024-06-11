@@ -105,7 +105,7 @@ tsibble::as_tsibble(aus) |>
   arrange(desc(State), Year, Age, Sex)
 ```
 
-\only<2-3>{\begin{textblock}{4}(11.5, 1)
+\begin{textblock}{4}(11.5, 1)
 \fontsize{11}{12}\sf
 \begin{block}{Variables}
 Index:
@@ -119,15 +119,14 @@ Keys:
     \item \texttt{State}
   \end{itemize}
 \end{block}
-\end{textblock}}
+\end{textblock}
 
-\only<3>{\begin{textblock}{4}(11.5, 4.73)
+\begin{textblock}{4}(11.5, 4.73)
 \fontsize{11}{12}\sf
 \begin{block}{}
 Every row must have a unique combination of Index and Keys
 \end{block}
 \end{textblock}
-}
 
 ## vital objects
 \placefig{8.3}{0}{width=2.5cm}{vital-hex}
@@ -235,7 +234,7 @@ norway_births <- read_hmd(
 
 * Uses `HMDHFDplus` package to handle the downloads.
 * Default variables: `Deaths`, `Exposures`, `Population`, `Mx`
-* Only 1x1 data supported.
+* Only $1\times1$ data supported.
 * `read_hmd_files()` and `read_hfd_files()` allow reading of downloaded files.
 
 ## HMD imports
@@ -337,13 +336,12 @@ Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
 \begin{align*}
 &\text{Naive model:} & m_{x,t} &= m_{x,t-1} + \varepsilon_{x,t} \\[0.3cm]
 &\text{Mean model:} & m_{x,t} &= \mu_{x} + \varepsilon_{x,t} \\[0.3cm]
-&\text{Lee-Carter model:} & \log(m_{x,t}) &= a_x + k_t b_x + \varepsilon_{x,t} \\[0.3cm]
-&\text{Functional data model:}\hspace*{0.3cm} & \log(m_{x,t}) &= \mu(x) + \sum_{j=1}^J \beta_{j,t} \phi_j(x) + \varepsilon_{t}(x)
+&\text{Lee-Carter model:} & \log(m_{x,t}) &= a_x + k_t b_x + \varepsilon_{x,t}
 \end{align*}
-where $\varepsilon\sim$ white noise with variance a function of $x$.
+where $\varepsilon_{x,t}\sim$ is noise term with variance $\sigma_x^2$.
 \end{block}
 
-## Benchmark models
+## Mortality models
 \fontsize{10}{11}\sf
 
 ```{r}
@@ -351,30 +349,31 @@ where $\varepsilon\sim$ white noise with variance a function of $x$.
 fit <- aus |>
   model(
     naive = FNAIVE(Mortality),
-    mean = FMEAN(Mortality)
+    mean = FMEAN(Mortality),
+    lc = LC(log(Mortality))
   )
 fit
 ```
 
-## Benchmark models
+## Naive model
 \fontsize{10}{11}\sf
 
 ```{r}
 #| label: benchmarks2
 fit |>
   filter(Sex == "female", State == "NSW") |>
-  select(mean) |>
+  select(naive) |>
   report()
 ```
 
-## Benchmark models
+## Naive models
 \fontsize{10}{11}\sf
 
 ```{r}
 #| label: benchmarks3
 #| fig-height: 3.7
 fit |>
-  select(mean) |>
+  select(naive) |>
   autoplot() + scale_y_log10()
 ```
 
@@ -391,20 +390,6 @@ Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
 * $\varepsilon_{x,t}$ is the error term.
 * Estimation of $k_t$ and $b_x$ via principal component analysis.
 * $k_t$ forecast using a random walk with drift = ARIMA(0,1,0)
-
-## Lee-Carter models
-\fontsize{10}{11}\sf
-
-```{r}
-#| label: lc1
-fit <- aus |>
-  model(
-    naive = FNAIVE(Mortality),
-    mean = FMEAN(Mortality),
-    lc = LC(log(Mortality))
-  )
-fit
-```
 
 ## Lee-Carter models
 \fontsize{10}{10}\sf
@@ -495,7 +480,9 @@ fc |> filter(.model == "lc")
 
 ```{r}
 #| label: forecast3
-fc |> filter(State == "NSW", .model == "lc") |> autoplot() + scale_y_log10()
+#| fig-height: 3.7
+fc |> filter(State == "NSW", .model == "lc") |>
+  autoplot() + scale_y_log10()
 ```
 
 ## Functional data models
@@ -529,6 +516,7 @@ sm_aus
 
 ```{r}
 #| label: fdm2
+#| fig-height: 3.7
 sm_aus <- aus |> smooth_mortality(Mortality)
 sm_aus |> filter(State == "NSW", Year == 1980) |> autoplot(Mortality) +
   geom_line(aes(y = .smooth), col = "blue") + scale_y_log10()
@@ -539,10 +527,7 @@ sm_aus |> filter(State == "NSW", Year == 1980) |> autoplot(Mortality) +
 
 ```{r}
 #| label: fdm3
-fit <- sm_aus |>
-  model(
-    hu = FDM(log(.smooth))
-  )
+fit <- sm_aus |> model(hu = FDM(log(.smooth)))
 fit
 ```
 
@@ -630,6 +615,7 @@ fit |> select(hu) |> time_components()
   * $\beta_{1,j},\dots,\beta_{T,j}$ modelled with ARIMA for products and ARMA for ratios (to ensure stationary sex-ratios)
 
 ## Coherent functional models
+\fontsize{10}{11}\sf
 
 ```{r}
 #| label: coherentfdm1
@@ -638,19 +624,38 @@ pr
 ```
 
 ## Coherent functional models
+\fontsize{10}{11}\sf
 
 ```{r}
 #| label: coherentfdm2
-pr <- aus |> make_pr(.smooth)
-fit <- pr |>
-  model(hby = FDM(log(.smooth), coherent = TRUE))
+pr <- sm_aus |> make_pr(.smooth)
+fit <- pr |> model(hby = FDM(log(.smooth), coherent = TRUE))
 fit
+```
+
+
+## Coherent functional models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: coherentfdm3
+#| fig-height: 3.7
+fc <- fit |> forecast(h = 20) |> undo_pr(.smooth)
+fc |> filter(State == "VIC")  |> autoplot() + scale_y_log10()
 ```
 
 # Future plans
 ## Future plans
 
-- Stochastic population forecasting (as per Booth-Hyndman 2008)
-- StMoMo
-- other tools in the demography package
-- demography package to be maintained but not developed
+- Remaining tools from the `demography` package
+- Stochastic population forecasting (as per Hyndman-Booth, IJF, 2008)
+- All models handled by `StMoMo` package
+- All methods from `MortalityLaws` package
+- `demography` package to be maintained but not developed
+- Suggestions from users
+
+\vspace*{1.5cm}
+
+\begin{alertblock}{}
+\centerline{https://pkg.robjhyndman.com/vital/}
+\end{alertblock}
