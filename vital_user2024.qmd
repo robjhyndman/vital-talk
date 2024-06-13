@@ -239,7 +239,6 @@ sm_aus |> filter(State == "NSW", Year == 1980) |> autoplot(Mortality) +
   geom_line(aes(y = .smooth), col = "blue") + scale_y_log10()
 ```
 
-
 ## Life tables
 \fontsize{10}{11}\sf
 
@@ -271,16 +270,20 @@ life_expectancy(aus) |>
 ```
 
 ## Mortality models
+\fontsize{12}{15}\sf
 
-Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
+:::: {.columns}
+::: {.column width="50%"}
+
+$m_{x,t}=$ mortality rate at age $x$ in year $t$.
 \begin{block}{}\vspace*{-0.5cm}
 \begin{align*}
-&\text{Naive model:} & m_{x,t} &= m_{x,t-1} + \varepsilon_{x,t} \\[0.1cm]
-&\text{Lee-Carter model:} & \log(m_{x,t}) &= a_x + k_t b_x + \varepsilon_{x,t}
+&\text{Naive:} & m_{x,t} &= m_{x,t-1} + \varepsilon_{x,t} \\[0.1cm]
+&\text{Lee-Carter:} & \log(m_{x,t}) &= a_x + k_t b_x + \varepsilon_{x,t}
 \end{align*}
-where $\varepsilon_{x,t}=$ noise term with variance $\sigma_x^2$.
+$\varepsilon_{x,t}=$ noise term with variance $\sigma_x^2$.
 \end{block}
-\fontsize{10}{11}\sf\pause\vspace*{0.3cm}
+\fontsize{10}{13}\sf\pause\vspace*{0.3cm}
 
 ```{r}
 #| label: models
@@ -291,30 +294,15 @@ fit <- aus |>
   )
 ```
 
-## Mortality models
-\fontsize{10}{10}\sf
+:::
 
-:::: {.columns}
+\fontsize{10}{10}\sf\pause
+
 ::: {.column width="50%"}
 
 ```{r}
 #| label: showfit
 fit
-```
-
-:::
-
-\pause
-
-::: {.column width="50%"}
-
-```{r}
-#| label: benchmarks2
-fit |>
-  filter(Sex == "female",
-         State == "NSW") |>
-  select(naive) |>
-  report()
 ```
 
 :::
