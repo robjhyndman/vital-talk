@@ -8,7 +8,6 @@ abstract: I will introduce the vital package which allows analysis of demographi
 format:
   presentation-beamer:
     pdf-engine: xelatex
-    keep-tex: true
     template-partials:
         - before-title.tex
 execute:
@@ -138,7 +137,7 @@ Every row must have a unique combination of Index and Keys
 aus
 ```
 
-\begin{textblock}{4}(11.5, 1.)
+\begin{textblock}{4.1}(11.5, 1.)
 \fontsize{11}{12}\sf
 \begin{block}{Variables}
 Index:
@@ -154,14 +153,14 @@ Keys:
 \end{block}
 \end{textblock}
 
-\begin{textblock}{4}(11.5, 4.73)
+\begin{textblock}{4.1}(11.5, 4.73)
 \fontsize{11}{12}\sf
 \begin{block}{}
 Every row must have a unique combination of Index and Keys
 \end{block}
 \end{textblock}
 
-\begin{textblock}{4}(11.5, 6.5)
+\begin{textblock}{4.1}(11.5, 6.5)
 \fontsize{11}{12}\sf
 \begin{block}{}
 Variables denoting age, sex, deaths, births and population can also be specified as attributes.
@@ -223,7 +222,7 @@ aus |> filter(State == "VIC") |>
 \fontsize{10}{11}\sf
 
 ```{r}
-#| label: fdm1
+#| label: smooth1
 sm_aus <- aus |> smooth_mortality(Mortality)
 sm_aus
 ```
@@ -233,7 +232,7 @@ sm_aus
 \fontsize{10}{11}\sf
 
 ```{r}
-#| label: fdm2
+#| label: smooth2
 #| fig-height: 3.7
 sm_aus <- aus |> smooth_mortality(Mortality)
 sm_aus |> filter(State == "NSW", Year == 1980) |> autoplot(Mortality) +
@@ -274,7 +273,7 @@ life_expectancy(aus) |>
 \fontsize{12}{15}\sf
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column width="55%"}
 
 $m_{x,t}=$ mortality rate at age $x$ in year $t$.
 \begin{block}{}\vspace*{-0.5cm}
@@ -299,7 +298,7 @@ fit <- aus |>
 
 \fontsize{10}{10}\sf\pause
 
-::: {.column width="50%"}
+::: {.column width="45%"}
 
 ```{r}
 #| label: showfit
@@ -311,7 +310,7 @@ fit
 
 ## Lee-Carter models
 \begin{textblock}{5}(10.5, -0.15)
-\begin{alertblock}{}
+\begin{alertblock}{}\fontsize{13}{14}\sf
 $\log(m_{x,t}) = a_x + k_t b_x + \varepsilon_{x,t}$
 \end{alertblock}
 \end{textblock}
@@ -375,7 +374,7 @@ Variance explained: 86.61%
 
 ## Lee-Carter models
 \begin{textblock}{5}(10.5, -0.15)
-\begin{alertblock}{}
+\begin{alertblock}{}\fontsize{13}{14}\sf
 $\log(m_{x,t}) = a_x + k_t b_x + \varepsilon_{x,t}$
 \end{alertblock}
 \end{textblock}
@@ -392,7 +391,7 @@ fit |>
 
 ## Lee-Carter models
 \begin{textblock}{5}(10.5, -0.15)
-\begin{alertblock}{}
+\begin{alertblock}{}\fontsize{13}{14}\sf
 $\log(m_{x,t}) = a_x + k_t b_x + \varepsilon_{x,t}$
 \end{alertblock}
 \end{textblock}
@@ -435,6 +434,166 @@ fc
 #| fig-height: 3.7
 fc |> filter(State == "NSW", .model == "lc") |>
   autoplot() + scale_y_log10()
+```
+
+## Functional data models
+\vspace*{-0.2cm}
+
+Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
+
+\begin{block}{}\vspace*{-0.4cm}
+\begin{align*}
+  \log(m_{t,x}) & = s_t(x) + \sigma_t(x)\varepsilon_{t,x}\\
+  s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{t,j}\phi_j(x) + e_t(x)
+\end{align*}
+\end{block}
+
+  * $s_t(x)=$ smoothed version of $y_t(x)$
+  * $\mu(x)=$ mean $s_t(x)$ across years.
+  * $\phi_j(x)$ and $\beta_{t,j}$ estimated using principal component \rlap{analysis.}
+  * $\beta_{1,j},\dots,\beta_{T,j}$ modelled with ARIMA or ARFIMA \rlap{processes.}
+
+## Functional data models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: fdm1
+sm_aus <- aus |> smooth_mortality(Mortality)
+sm_aus
+```
+
+
+## Functional data models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: fdm2
+#| fig-height: 3.7
+sm_aus <- aus |> smooth_mortality(Mortality)
+sm_aus |> filter(State == "NSW", Year == 1980) |> autoplot(Mortality) +
+  geom_line(aes(y = .smooth), col = "blue") + scale_y_log10()
+```
+
+## Functional data models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: fdm3
+fit <- sm_aus |> model(hu = FDM(log(.smooth)))
+fit
+```
+
+## Functional data models
+\fontsize{10}{10}\sf
+
+```{r}
+#| label: fdm4
+fit |>
+  filter(Sex == "female", State == "NSW") |>
+  select(hu) |>
+  report()
+```
+
+## Functional data models
+\fontsize{9}{8.5}\sf\vspace*{-0.2cm}
+
+```
+Coefficients
+# A tsibble: 120 x 8 [1Y]
+   Year  mean beta1  beta2   beta3     beta4   beta5   beta6
+  <int> <dbl> <dbl>  <dbl>   <dbl>     <dbl>   <dbl>   <dbl>
+1  1901     1  11.1 -0.522 -0.0553  0.207    0.358    0.0305
+2  1902     1  11.8 -0.649  0.399   0.856    0.0319   0.422
+3  1903     1  11.5 -0.930 -0.485   0.398    0.399   -0.376
+4  1904     1  11.1 -0.827 -0.214  -0.000305 0.00125 -0.0783
+5  1905     1  10.2 -0.563 -0.105   0.324    0.122    0.0478
+# i 115 more rows
+# i Use `print(n = ...)` to see more rows
+
+Time series models
+   beta1 : ARIMA(0,1,1) w/ drift
+   beta2 : ARIMA(0,2,2)
+   beta3 : ARIMA(1,0,1)
+   beta4 : ARIMA(0,0,2)
+   beta5 : ARIMA(0,0,0)
+   beta6 : ARIMA(2,0,2)
+
+Variance explained
+  91.38 + 1.81 + 0.58 + 0.49 + 0.42 + 0.39 = 95.06%
+```
+
+## Functional data models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: fdm5
+#| fig-height: 3.7
+fit |>
+  filter(State == "NSW") |>
+  select(hu) |>
+  autoplot()
+```
+
+
+## Functional data models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: fdm6
+fit |> select(hu) |> age_components()
+```
+
+## Functional data models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: fdm7
+fit |> select(hu) |> time_components()
+```
+
+## Coherent functional models
+
+\begin{block}{}\vspace*{-0.6cm}
+\begin{align*}
+  y_t(x) & = s_t(x) + \sigma_t(x)\varepsilon_{t,x}\\
+  s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{t,j}\phi_j(x) + e_t(x)
+\end{align*}
+\end{block}
+
+  * $y_t(x)= \log(m_{x,t}^Mm_{x,t}^F)$ and $\log(m_{x,t}^M/m_{x,t}^F)$
+  * $s_t(x)=$ smoothed version of $y_t(x)$
+  * $\mu(x)=$ mean $s_t(x)$ across years.
+  * $\phi_j(x)$ and $\beta_{t,j}$ estimated using principal component \rlap{analysis.}
+  * $\beta_{1,j},\dots,\beta_{T,j}$ modelled with ARIMA for products and ARMA for ratios (to ensure stationary sex-ratios)
+
+## Coherent functional models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: coherentfdm1
+pr <- sm_aus |> make_pr(.smooth)
+pr
+```
+
+## Coherent functional models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: coherentfdm2
+pr <- sm_aus |> make_pr(.smooth)
+fit <- pr |> model(hby = FDM(log(.smooth), coherent = TRUE))
+fit
+```
+
+
+## Coherent functional models
+\fontsize{10}{11}\sf
+
+```{r}
+#| label: coherentfdm3
+#| fig-height: 3.7
+fc <- fit |> forecast(h = 20) |> undo_pr(.smooth)
+fc |> filter(State == "VIC")  |> autoplot() + scale_y_log10()
 ```
 
 ## Other functionality
