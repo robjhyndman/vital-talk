@@ -28,3 +28,15 @@ $endif$
 
 % Change Monash Blue to match title page
 \definecolor{MonashBlue}{HTML}{006CAD}
+
+% Fix Fira font for maths with xelatex
+\usepackage[fira]{fontsetup}
+
+% Ligatured coding font
+\setmonofont[Scale = 0.8]{Hack Nerd Font JBM Ligatured CCG}
+% For some reason, this makes <- appear ligatured in code
+\makeatletter
+\def\verbatim@nolig@list{}
+\makeatother
+
+\relax
