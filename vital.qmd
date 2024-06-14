@@ -486,6 +486,7 @@ fc |> filter(State == "NSW", .model == "lc") |>
 ```
 
 ## Functional data models
+\vspace*{-0.2cm}
 
 Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
 
@@ -601,7 +602,7 @@ fit |> select(hu) |> time_components()
 
 ## Coherent functional models
 
-\begin{block}{}\vspace*{-0.4cm}
+\begin{block}{}\vspace*{-0.6cm}
 \begin{align*}
   y_t(x) & = s_t(x) + \sigma_t(x)\varepsilon_{t,x}\\
   s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{t,j}\phi_j(x) + e_t(x)
