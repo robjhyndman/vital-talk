@@ -7,7 +7,6 @@ toc: false
 abstract: I will introduce the vital package which allows analysis of demographic data using tidy tools. The package uses a variation of tsibble objects as the main data class, so all of the infrastructure available for tsibble and tibble objects can also be used with vital objects. Data may include births, deaths, mortality, fertility, population and migration data. Functions for plotting, smoothing, modelling and forecasting data are included. Models include the classical Lee-Carter model as well as functional data models. Future plans include replicating all of the models available in the demography and StMoMo packages. The package is available at pkg.robjhyndman.com/vital/ and on CRAN.
 format:
   presentation-beamer:
-    pdf-engine: xelatex
     template-partials:
         - before-title.tex
 execute:
@@ -48,7 +47,6 @@ options(
 )
 ```
 
-
 ## Demographic data structures in R packages
 \vspace*{-0.75cm}
 
@@ -81,8 +79,6 @@ tibble::tribble(
 
 \alert{Australian Deaths 1901--2020}
 
-\fontsize{10}{10}\sf
-
 ```{r}
 #| label: tibble
 #| echo: false
@@ -93,8 +89,6 @@ tibble::as_tibble(aus) |>
 ## tsibble objects
 \placefig{8.3}{0}{width=2.5cm}{tsibble}
 \alert{Australian Deaths 1901--2020}
-
-\fontsize{10}{10}\sf
 
 ```{r}
 #| label: tsibble
@@ -129,8 +123,7 @@ Every row must have a unique combination of Index and Keys
 ## vital objects
 \placefig{8.3}{0}{width=2.5cm}{vital-hex}
 \alert{Australian Deaths 1901--2020}
-
-\fontsize{10}{10}\sf\vspace*{-0.05cm}
+\vspace*{-0.05cm}
 
 ```{r}
 #| label: vital
@@ -189,7 +182,6 @@ vital_vars(aus)
 ```
 
 ## Rainbow plots
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: plot0
@@ -198,7 +190,6 @@ aus |> autoplot(Mortality) + scale_y_log10()
 ```
 
 ## Rainbow plots
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: plot1
@@ -207,7 +198,6 @@ aus |> filter(State == "VIC") |> autoplot(Mortality) + scale_y_log10()
 ```
 
 ## Rainbow plots
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: plot2
@@ -219,7 +209,6 @@ aus |> filter(State == "VIC") |>
 ```
 
 ## Smoothing
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: smooth1
@@ -227,9 +216,7 @@ sm_aus <- aus |> smooth_mortality(Mortality)
 sm_aus
 ```
 
-
 ## Smoothing
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: smooth2
@@ -240,7 +227,6 @@ sm_aus |> filter(State == "NSW", Year == 1980) |> autoplot(Mortality) +
 ```
 
 ## Life tables
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: life-tables
@@ -249,16 +235,12 @@ life_table(aus)
 
 ## Life expectancy
 
-\fontsize{10}{11}\sf
-
 ```{r}
 #| label: life-expectancy
 life_expectancy(aus)
 ```
 
 ## Life expectancy
-
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: life-expectancy2
@@ -283,7 +265,7 @@ $m_{x,t}=$ mortality rate at age $x$ in year $t$.
 \end{align*}
 $\varepsilon_{x,t}=$ noise term with variance $\sigma_x^2$.
 \end{block}
-\fontsize{10}{13}\sf\pause\vspace*{0.3cm}
+\pause\vspace*{0.3cm}
 
 ```{r}
 #| label: models
@@ -296,7 +278,7 @@ fit <- aus |>
 
 :::
 
-\fontsize{10}{10}\sf\pause
+\pause
 
 ::: {.column width="45%"}
 
@@ -314,7 +296,6 @@ fit
 $\log(m_{x,t}) = a_x + k_t b_x + \varepsilon_{x,t}$
 \end{alertblock}
 \end{textblock}
-\fontsize{10}{10}\sf
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -341,8 +322,6 @@ Options:
 ```
 
 :::
-
-\fontsize{10}{9}\sf
 
 ::: {.column width="50%"}
 
@@ -378,7 +357,6 @@ Variance explained: 86.61%
 $\log(m_{x,t}) = a_x + k_t b_x + \varepsilon_{x,t}$
 \end{alertblock}
 \end{textblock}
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: lc3
@@ -395,7 +373,6 @@ fit |>
 $\log(m_{x,t}) = a_x + k_t b_x + \varepsilon_{x,t}$
 \end{alertblock}
 \end{textblock}
-\fontsize{10}{11}\sf
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -418,7 +395,6 @@ fit |> select(lc) |> time_components()
 ::::
 
 ## Forecasts
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: forecast1
@@ -427,7 +403,6 @@ fc
 ```
 
 ## NSW forecasts using Lee-Carter method
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: forecast3
@@ -454,7 +429,6 @@ Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
   * $\beta_{1j},\dots,\beta_{Tj}$ modelled with ARIMA or ARFIMA \rlap{processes.}
 
 ## Functional data models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: fdm1
@@ -462,9 +436,7 @@ sm_aus <- aus |> smooth_mortality(Mortality)
 sm_aus
 ```
 
-
 ## Functional data models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: fdm2
@@ -475,7 +447,6 @@ sm_aus |> filter(State == "NSW", Year == 1980) |> autoplot(Mortality) +
 ```
 
 ## Functional data models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: fdm3
@@ -484,7 +455,6 @@ fit
 ```
 
 ## Functional data models
-\fontsize{10}{10}\sf
 
 ```{r}
 #| label: fdm4
@@ -495,7 +465,7 @@ fit |>
 ```
 
 ## Functional data models
-\fontsize{9}{8.5}\sf\vspace*{-0.2cm}
+\vspace*{-0.2cm}
 
 ```
 Coefficients
@@ -523,7 +493,6 @@ Variance explained
 ```
 
 ## Functional data models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: fdm5
@@ -534,9 +503,7 @@ fit |>
   autoplot()
 ```
 
-
 ## Functional data models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: fdm6
@@ -544,7 +511,6 @@ fit |> select(hu) |> age_components()
 ```
 
 ## Functional data models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: fdm7
@@ -567,7 +533,6 @@ fit |> select(hu) |> time_components()
   * $\beta_{1j},\dots,\beta_{Tj}$ modelled with ARIMA for products and ARMA for ratios (to ensure stationary sex-ratios)
 
 ## Coherent functional models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: coherentfdm1
@@ -576,7 +541,6 @@ pr
 ```
 
 ## Coherent functional models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: coherentfdm2
@@ -585,9 +549,7 @@ fit <- pr |> model(hby = FDM(log(.smooth), coherent = TRUE))
 fit
 ```
 
-
 ## Coherent functional models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: coherentfdm3

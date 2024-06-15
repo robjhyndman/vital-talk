@@ -7,7 +7,6 @@ toc: true
 abstract: I will introduce the vital package which allows analysis of demographic data using tidy tools. The package uses a variation of tsibble objects as the main data class, so all of the infrastructure available for tsibble and tibble objects can also be used with vital objects. Data may include births, deaths, mortality, fertility, population and migration data. Functions for plotting, smoothing, modelling and forecasting data are included. Models include the classical Lee-Carter model as well as functional data models. Future plans include replicating all of the models available in the demography and StMoMo packages. The package is available at https://pkg.robjhyndman.com/vital/.
 format:
   presentation-beamer:
-    pdf-engine: xelatex
     template-partials:
         - before-title.tex
 execute:
@@ -48,7 +47,6 @@ options(
 )
 ```
 
-
 # Vital objects
 
 ## Demographic data structures in R packages
@@ -83,8 +81,6 @@ tibble::tribble(
 
 \alert{Australian Deaths 1901--2020}
 
-\fontsize{10}{10}\sf
-
 ```{r}
 #| label: tibble
 #| echo: false
@@ -95,8 +91,6 @@ tibble::as_tibble(aus) |>
 ## tsibble objects
 \placefig{8.3}{0}{width=2.5cm}{tsibble}
 \alert{Australian Deaths 1901--2020}
-
-\fontsize{10}{10}\sf
 
 ```{r}
 #| label: tsibble
@@ -132,14 +126,14 @@ Every row must have a unique combination of Index and Keys
 \placefig{8.3}{0}{width=2.5cm}{vital-hex}
 \alert{Australian Deaths 1901--2020}
 
-\fontsize{10}{10}\sf
+\vspace*{-0.05cm}
 
 ```{r}
 #| label: vital
 aus
 ```
 
-\begin{textblock}{4}(11.5, 1.)
+\begin{textblock}{4.1}(11.5, 1.)
 \fontsize{11}{12}\sf
 \begin{block}{Variables}
 Index:
@@ -155,17 +149,17 @@ Keys:
 \end{block}
 \end{textblock}
 
-\begin{textblock}{4}(11.5, 4.73)
+\begin{textblock}{4.1}(11.5, 4.73)
 \fontsize{11}{12}\sf
 \begin{block}{}
 Every row must have a unique combination of Index and Keys
 \end{block}
 \end{textblock}
 
-\begin{textblock}{4}(11.5, 6.5)
+\begin{textblock}{4.1}(11.5, 6.5)
 \fontsize{11}{12}\sf
 \begin{block}{}
-Variables denoting age, sex, deaths, births and population can also be specified.
+Variables denoting age, sex, deaths, births and population can also be specified as attributes.
 \end{block}
 \end{textblock}
 
@@ -211,9 +205,7 @@ vital_vars(aus)
 \end{textblock}
 \fullwidth{hfd}
 
-
 ## HMD imports
-\fontsize{10}{10}\sf
 
 ```{r}
 #| eval: false
@@ -230,7 +222,7 @@ norway_births <- read_hmd(
 )
 ```
 
-\fontsize{14}{15}\sf\vspace*{-0.2cm}
+\fontsize{14}{15}\sf\vspace*{-0.25cm}
 
 * Uses `HMDHFDplus` package to handle the downloads.
 * Default variables: `Deaths`, `Exposures`, `Population`, `Mx`
@@ -245,11 +237,9 @@ norway_births <- read_hmd(
 norway_births
 ```
 
-
 # Plots
 
 ## Recall: Australian mortality data
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: aus
@@ -257,7 +247,6 @@ aus
 ```
 
 ## Rainbow plots
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: plot0
@@ -266,7 +255,6 @@ aus |> autoplot(Mortality) + scale_y_log10()
 ```
 
 ## Rainbow plots
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: plot1
@@ -275,7 +263,6 @@ aus |> filter(State == "VIC") |> autoplot(Mortality) + scale_y_log10()
 ```
 
 ## Rainbow plots
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: plot2
@@ -289,7 +276,6 @@ aus |> filter(State == "VIC") |>
 # Life tables and life expectancy
 
 ## Life tables
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: life-tables
@@ -298,17 +284,12 @@ life_table(aus)
 
 ## Life expectancy
 
-\fontsize{10}{11}\sf
-
 ```{r}
 #| label: life-expectancy
 life_expectancy(aus)
 ```
 
-
 ## Life expectancy
-
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: life-expectancy2
@@ -503,7 +484,6 @@ Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
   * $\beta_{1,j},\dots,\beta_{T,j}$ modelled with ARIMA or ARFIMA \rlap{processes.}
 
 ## Functional data models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: fdm1
@@ -511,9 +491,7 @@ sm_aus <- aus |> smooth_mortality(Mortality)
 sm_aus
 ```
 
-
 ## Functional data models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: fdm2
@@ -524,7 +502,6 @@ sm_aus |> filter(State == "NSW", Year == 1980) |> autoplot(Mortality) +
 ```
 
 ## Functional data models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: fdm3
@@ -533,7 +510,6 @@ fit
 ```
 
 ## Functional data models
-\fontsize{10}{10}\sf
 
 ```{r}
 #| label: fdm4
@@ -544,7 +520,7 @@ fit |>
 ```
 
 ## Functional data models
-\fontsize{9}{8.5}\sf\vspace*{-0.2cm}
+\vspace*{-0.2cm}
 
 ```
 Coefficients
@@ -572,7 +548,6 @@ Variance explained
 ```
 
 ## Functional data models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: fdm5
@@ -583,9 +558,7 @@ fit |>
   autoplot()
 ```
 
-
 ## Functional data models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: fdm6
@@ -593,7 +566,6 @@ fit |> select(hu) |> age_components()
 ```
 
 ## Functional data models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: fdm7
@@ -616,7 +588,6 @@ fit |> select(hu) |> time_components()
   * $\beta_{1,j},\dots,\beta_{T,j}$ modelled with ARIMA for products and ARMA for ratios (to ensure stationary sex-ratios)
 
 ## Coherent functional models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: coherentfdm1
@@ -625,7 +596,6 @@ pr
 ```
 
 ## Coherent functional models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: coherentfdm2
@@ -634,9 +604,7 @@ fit <- pr |> model(hby = FDM(log(.smooth), coherent = TRUE))
 fit
 ```
 
-
 ## Coherent functional models
-\fontsize{10}{11}\sf
 
 ```{r}
 #| label: coherentfdm3
