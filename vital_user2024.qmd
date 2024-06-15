@@ -174,6 +174,7 @@ index_var(aus)
 #| label: vital_keys
 key_vars(aus)
 ```
+
 \vspace*{0.4cm}
 
 ```{r}
@@ -252,7 +253,7 @@ life_expectancy(aus) |>
 ```
 
 ## Mortality models
-\fontsize{12}{15}\sf
+\fontsize{13}{15}\sf
 
 :::: {.columns}
 ::: {.column width="55%"}
@@ -428,43 +429,39 @@ Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
   * $\phi_j(x)$ and $\beta_{tj}$ estimated using principal component \rlap{analysis.}
   * $\beta_{1j},\dots,\beta_{Tj}$ modelled with ARIMA or ARFIMA \rlap{processes.}
 
-## Functional data models
-
-```{r}
-#| label: fdm1
-sm_aus <- aus |> smooth_mortality(Mortality)
-sm_aus
-```
-
-## Functional data models
-
-```{r}
-#| label: fdm2
-#| fig-height: 3.7
-sm_aus <- aus |> smooth_mortality(Mortality)
-sm_aus |> filter(State == "NSW", Year == 1980) |> autoplot(Mortality) +
-  geom_line(aes(y = .smooth), col = "blue") + scale_y_log10()
-```
 
 ## Functional data models
 
 ```{r}
 #| label: fdm3
-fit <- sm_aus |> model(hu = FDM(log(.smooth)))
+fit <- aus |>
+  smooth_mortality(Mortality)  |>
+  model(hu = FDM(log(.smooth)))
 fit
 ```
 
 ## Functional data models
+\begin{textblock}{5.5}(10, -0.15)
+\begin{alertblock}{}\fontsize{12}{12}\sf\vspace*{-0.2cm}
+\centerline{$s_t(x) = \mu(x) + \displaystyle\sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)$}
+\vspace*{-0.2cm}
+\end{alertblock}
+\end{textblock}
 
 ```{r}
 #| label: fdm4
 fit |>
   filter(Sex == "female", State == "NSW") |>
-  select(hu) |>
   report()
 ```
 
 ## Functional data models
+\begin{textblock}{5.5}(10, -0.15)
+\begin{alertblock}{}\fontsize{12}{12}\sf\vspace*{-0.2cm}
+\centerline{$s_t(x) = \mu(x) + \displaystyle\sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)$}
+\vspace*{-0.2cm}
+\end{alertblock}
+\end{textblock}
 \vspace*{-0.2cm}
 
 ```
@@ -493,70 +490,47 @@ Variance explained
 ```
 
 ## Functional data models
+\begin{textblock}{5.5}(10, -0.15)
+\begin{alertblock}{}\fontsize{12}{12}\sf\vspace*{-0.2cm}
+\centerline{$s_t(x) = \mu(x) + \displaystyle\sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)$}
+\vspace*{-0.2cm}
+\end{alertblock}
+\end{textblock}
 
 ```{r}
 #| label: fdm5
 #| fig-height: 3.7
 fit |>
   filter(State == "NSW") |>
-  select(hu) |>
   autoplot()
 ```
 
 ## Functional data models
+\begin{textblock}{5.5}(10, -0.15)
+\begin{alertblock}{}\fontsize{12}{12}\sf\vspace*{-0.2cm}
+\centerline{$s_t(x) = \mu(x) + \displaystyle\sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)$}
+\vspace*{-0.2cm}
+\end{alertblock}
+\end{textblock}
 
 ```{r}
 #| label: fdm6
-fit |> select(hu) |> age_components()
+fit |> age_components()
 ```
 
 ## Functional data models
+\begin{textblock}{5.5}(10, -0.15)
+\begin{alertblock}{}\fontsize{12}{12}\sf\vspace*{-0.2cm}
+\centerline{$s_t(x) = \mu(x) + \displaystyle\sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)$}
+\vspace*{-0.2cm}
+\end{alertblock}
+\end{textblock}
 
 ```{r}
 #| label: fdm7
-fit |> select(hu) |> time_components()
+fit |> time_components()
 ```
 
-## Coherent functional models
-
-\begin{block}{}\vspace*{-0.6cm}
-\begin{align*}
-  y_t(x) & = s_t(x) + \sigma_t(x)\varepsilon_{t,x}\\
-  s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)
-\end{align*}
-\end{block}
-
-  * $y_t(x)= \log(m_{x,t}^Mm_{x,t}^F)$ and $\log(m_{x,t}^M/m_{x,t}^F)$
-  * $s_t(x)=$ smoothed version of $y_t(x)$
-  * $\mu(x)=$ mean $s_t(x)$ across years.
-  * $\phi_j(x)$ and $\beta_{tj}$ estimated using principal component \rlap{analysis.}
-  * $\beta_{1j},\dots,\beta_{Tj}$ modelled with ARIMA for products and ARMA for ratios (to ensure stationary sex-ratios)
-
-## Coherent functional models
-
-```{r}
-#| label: coherentfdm1
-pr <- sm_aus |> make_pr(.smooth)
-pr
-```
-
-## Coherent functional models
-
-```{r}
-#| label: coherentfdm2
-pr <- sm_aus |> make_pr(.smooth)
-fit <- pr |> model(hby = FDM(log(.smooth), coherent = TRUE))
-fit
-```
-
-## Coherent functional models
-
-```{r}
-#| label: coherentfdm3
-#| fig-height: 3.7
-fc <- fit |> forecast(h = 20) |> undo_pr(.smooth)
-fc |> filter(State == "VIC")  |> autoplot() + scale_y_log10()
-```
 
 ## Other functionality
 \vspace*{-0.2cm}
@@ -567,6 +541,7 @@ fc |> filter(State == "VIC")  |> autoplot() + scale_y_log10()
 * Compute net migration from population,\newline births and deaths.
 * Compute total fertility rates from age-specific fertility rates.
 * Various smoothing functions
+* Coherent functional data models
 
 ## Future plans
 \vspace*{-0.2cm}

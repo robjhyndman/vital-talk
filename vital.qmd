@@ -4,7 +4,7 @@ author: Rob J Hyndman
 date: 26 June 2024
 titlegraphic: bg-06.png
 toc: true
-abstract: I will introduce the vital package which allows analysis of demographic data using tidy tools. The package uses a variation of tsibble objects as the main data class, so all of the infrastructure available for tsibble and tibble objects can also be used with vital objects. Data may include births, deaths, mortality, fertility, population and migration data. Functions for plotting, smoothing, modelling and forecasting data are included. Models include the classical Lee-Carter model as well as functional data models. Future plans include replicating all of the models available in the demography and StMoMo packages. The package is available at https://pkg.robjhyndman.com/vital/.
+abstract: I will introduce the vital package which allows analysis of demographic data using tidy tools. The package uses a variation of tsibble objects as the main data class, so all of the infrastructure available for tsibble and tibble objects can also be used with vital objects. Data may include births, deaths, mortality, fertility, population and migration data. Functions for plotting, smoothing, modelling and forecasting data are included. Models include the classical Lee-Carter model as well as functional data models. Future plans include replicating all of the models available in the demography and StMoMo packages. The package is available at pkg.robjhyndman.com/vital/ and on CRAN.
 format:
   presentation-beamer:
     template-partials:
@@ -125,7 +125,6 @@ Every row must have a unique combination of Index and Keys
 ## vital objects
 \placefig{8.3}{0}{width=2.5cm}{vital-hex}
 \alert{Australian Deaths 1901--2020}
-
 \vspace*{-0.05cm}
 
 ```{r}
@@ -311,80 +310,78 @@ life_expectancy(aus) |>
 # Mortality models
 
 ## Mortality models
+\fontsize{13}{15}\sf
 
-Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
+:::: {.columns}
+::: {.column width="55%"}
+
+$m_{x,t}=$ mortality rate at age $x$ in year $t$.
 \begin{block}{}\vspace*{-0.5cm}
 \begin{align*}
-&\text{Naive model:} & m_{x,t} &= m_{x,t-1} + \varepsilon_{x,t} \\[0.3cm]
-&\text{Mean model:} & m_{x,t} &= \mu_{x} + \varepsilon_{x,t} \\[0.3cm]
-&\text{Lee-Carter model:} & \log(m_{x,t}) &= a_x + k_t b_x + \varepsilon_{x,t}
+&\text{Naive:} & m_{x,t} &= m_{x,t-1} + \varepsilon_{x,t} \\[0.1cm]
+&\text{Lee-Carter:} & \log(m_{x,t}) &= a_x + k_t b_x + \varepsilon_{x,t}
 \end{align*}
-where $\varepsilon_{x,t}\sim$ is noise term with variance $\sigma_x^2$.
+$\varepsilon_{x,t}=$ noise term with variance $\sigma_x^2$.
 \end{block}
-
-## Mortality models
-\fontsize{10}{11}\sf
+\pause\vspace*{0.3cm}
 
 ```{r}
-#| label: benchmarks
+#| label: models
 fit <- aus |>
   model(
     naive = FNAIVE(Mortality),
-    mean = FMEAN(Mortality),
     lc = LC(log(Mortality))
   )
+```
+
+:::
+
+\pause
+
+::: {.column width="45%"}
+
+```{r}
+#| label: showfit
 fit
 ```
 
-## Naive model
-\fontsize{10}{11}\sf
-
-```{r}
-#| label: benchmarks2
-fit |>
-  filter(Sex == "female", State == "NSW") |>
-  select(naive) |>
-  report()
-```
-
-## Naive models
-\fontsize{10}{11}\sf
-
-```{r}
-#| label: benchmarks3
-#| fig-height: 3.7
-fit |>
-  select(naive) |>
-  autoplot() + scale_y_log10()
-```
+:::
+::::
 
 ## Lee-Carter models
+\begin{textblock}{5}(10.5, -0.15)
+\begin{alertblock}{}\fontsize{13}{14}\sf
+$\log(m_{x,t}) = a_x + k_t b_x + \varepsilon_{x,t}$
+\end{alertblock}
+\end{textblock}
 
-Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
-\begin{block}{}
-\centerline{$\log(m_{x,t}) = a_x + k_t b_x + \varepsilon_{x,t}$}
-\end{block}
-
-* $a_x$ is the mean log mortality rate at age $x$.
-* $k_t$ tracks mortality changes over time.
-* $b_x$ allows changes in mortality rates to vary by age.
-* $\varepsilon_{x,t}$ is the error term.
-* Estimation of $k_t$ and $b_x$ via principal component analysis.
-* $k_t$ forecast using a random walk with drift = ARIMA(0,1,0)
-
-## Lee-Carter models
-\fontsize{10}{10}\sf
+:::: {.columns}
+::: {.column width="50%"}
 
 ```{r}
 #| label: lc2
+#| echo: true
+#| output: false
 fit |>
-  filter(Sex == "female", State == "NSW") |>
+  filter(Sex == "female",
+         State == "NSW") |>
   select(lc) |>
   report()
 ```
 
-## Lee-Carter models
-\fontsize{10}{9}\sf\vspace*{-0.2cm}
+```
+Series: Mortality
+Model: LC
+Transformation: log(Mortality)
+
+Options:
+  Adjust method: dt
+  Jump choice: fit
+```
+
+:::
+
+::: {.column width="50%"}
 
 ```
 Age functions
@@ -406,12 +403,18 @@ Time coefficients
 # i 117 more rows
 
 Time series model: RW w/ drift
-
 Variance explained: 86.61%
 ```
 
+:::
+::::
+
 ## Lee-Carter models
-\fontsize{10}{11}\sf
+\begin{textblock}{5}(10.5, -0.15)
+\begin{alertblock}{}\fontsize{13}{14}\sf
+$\log(m_{x,t}) = a_x + k_t b_x + \varepsilon_{x,t}$
+\end{alertblock}
+\end{textblock}
 
 ```{r}
 #| label: lc3
@@ -423,24 +426,33 @@ fit |>
 ```
 
 ## Lee-Carter models
-\fontsize{10}{11}\sf
+\begin{textblock}{5}(10.5, -0.15)
+\begin{alertblock}{}\fontsize{13}{14}\sf
+$\log(m_{x,t}) = a_x + k_t b_x + \varepsilon_{x,t}$
+\end{alertblock}
+\end{textblock}
+
+:::: {.columns}
+::: {.column width="50%"}
 
 ```{r}
 #| label: lc4
 fit |> select(lc) |> age_components()
 ```
 
+:::
 
-## Lee-Carter models
-\fontsize{10}{11}\sf
+::: {.column width="50%"}
 
 ```{r}
 #| label: lc5
 fit |> select(lc) |> time_components()
 ```
 
-## Lee-Carter forecasts
-\fontsize{10}{11}\sf
+:::
+::::
+
+## Forecasts
 
 ```{r}
 #| label: forecast1
@@ -448,16 +460,7 @@ fc <- fit |> forecast(h = 20)
 fc
 ```
 
-## Lee-Carter forecasts
-\fontsize{10}{11}\sf
-
-```{r}
-#| label: forecast2
-fc |> filter(.model == "lc")
-```
-
-## Lee-Carter forecasts
-\fontsize{10}{11}\sf
+## NSW forecasts using Lee-Carter method
 
 ```{r}
 #| label: forecast3
@@ -474,14 +477,14 @@ Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
 \begin{block}{}\vspace*{-0.4cm}
 \begin{align*}
   \log(m_{t,x}) & = s_t(x) + \sigma_t(x)\varepsilon_{t,x}\\
-  s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{t,j}\phi_j(x) + e_t(x)
+  s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)
 \end{align*}
 \end{block}
 
   * $s_t(x)=$ smoothed version of $y_t(x)$
   * $\mu(x)=$ mean $s_t(x)$ across years.
-  * $\phi_j(x)$ and $\beta_{t,j}$ estimated using principal component \rlap{analysis.}
-  * $\beta_{1,j},\dots,\beta_{T,j}$ modelled with ARIMA or ARFIMA \rlap{processes.}
+  * $\phi_j(x)$ and $\beta_{tj}$ estimated using principal component \rlap{analysis.}
+  * $\beta_{1j},\dots,\beta_{Tj}$ modelled with ARIMA or ARFIMA \rlap{processes.}
 
 ## Functional data models
 
@@ -510,16 +513,27 @@ fit
 ```
 
 ## Functional data models
+\begin{textblock}{5.5}(10, -0.15)
+\begin{alertblock}{}\fontsize{12}{12}\sf\vspace*{-0.2cm}
+\centerline{$s_t(x) = \mu(x) + \displaystyle\sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)$}
+\vspace*{-0.2cm}
+\end{alertblock}
+\end{textblock}
 
 ```{r}
 #| label: fdm4
 fit |>
   filter(Sex == "female", State == "NSW") |>
-  select(hu) |>
   report()
 ```
 
 ## Functional data models
+\begin{textblock}{5.5}(10, -0.15)
+\begin{alertblock}{}\fontsize{12}{12}\sf\vspace*{-0.2cm}
+\centerline{$s_t(x) = \mu(x) + \displaystyle\sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)$}
+\vspace*{-0.2cm}
+\end{alertblock}
+\end{textblock}
 \vspace*{-0.2cm}
 
 ```
@@ -548,28 +562,45 @@ Variance explained
 ```
 
 ## Functional data models
+\begin{textblock}{5.5}(10, -0.15)
+\begin{alertblock}{}\fontsize{12}{12}\sf\vspace*{-0.2cm}
+\centerline{$s_t(x) = \mu(x) + \displaystyle\sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)$}
+\vspace*{-0.2cm}
+\end{alertblock}
+\end{textblock}
 
 ```{r}
 #| label: fdm5
 #| fig-height: 3.7
 fit |>
   filter(State == "NSW") |>
-  select(hu) |>
   autoplot()
 ```
 
 ## Functional data models
+\begin{textblock}{5.5}(10, -0.15)
+\begin{alertblock}{}\fontsize{12}{12}\sf\vspace*{-0.2cm}
+\centerline{$s_t(x) = \mu(x) + \displaystyle\sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)$}
+\vspace*{-0.2cm}
+\end{alertblock}
+\end{textblock}
 
 ```{r}
 #| label: fdm6
-fit |> select(hu) |> age_components()
+fit |> age_components()
 ```
 
 ## Functional data models
+\begin{textblock}{5.5}(10, -0.15)
+\begin{alertblock}{}\fontsize{12}{12}\sf\vspace*{-0.2cm}
+\centerline{$s_t(x) = \mu(x) + \displaystyle\sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)$}
+\vspace*{-0.2cm}
+\end{alertblock}
+\end{textblock}
 
 ```{r}
 #| label: fdm7
-fit |> select(hu) |> time_components()
+fit |> time_components()
 ```
 
 ## Coherent functional models
@@ -577,15 +608,15 @@ fit |> select(hu) |> time_components()
 \begin{block}{}\vspace*{-0.6cm}
 \begin{align*}
   y_t(x) & = s_t(x) + \sigma_t(x)\varepsilon_{t,x}\\
-  s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{t,j}\phi_j(x) + e_t(x)
+  s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)
 \end{align*}
 \end{block}
 
   * $y_t(x)= \log(m_{x,t}^Mm_{x,t}^F)$ and $\log(m_{x,t}^M/m_{x,t}^F)$
   * $s_t(x)=$ smoothed version of $y_t(x)$
   * $\mu(x)=$ mean $s_t(x)$ across years.
-  * $\phi_j(x)$ and $\beta_{t,j}$ estimated using principal component \rlap{analysis.}
-  * $\beta_{1,j},\dots,\beta_{T,j}$ modelled with ARIMA for products and ARMA for ratios (to ensure stationary sex-ratios)
+  * $\phi_j(x)$ and $\beta_{tj}$ estimated using principal component \rlap{analysis.}
+  * $\beta_{1j},\dots,\beta_{Tj}$ modelled with ARIMA for products and ARMA for ratios (to ensure stationary sex-ratios)
 
 ## Coherent functional models
 
@@ -613,7 +644,17 @@ fc <- fit |> forecast(h = 20) |> undo_pr(.smooth)
 fc |> filter(State == "VIC")  |> autoplot() + scale_y_log10()
 ```
 
-# Future plans
+# Other features and future plans
+
+## Other functionality
+\vspace*{-0.2cm}
+\placefig{11.9}{.1}{width=3.5cm}{vital-hex}
+
+* Convert demogdata, tsibble & data.frame\newline objects to vital.
+* Compute net migration from population,\newline births and deaths.
+* Compute total fertility rates from age-specific fertility rates.
+* Various smoothing functions
+
 ## Future plans
 \vspace*{-0.2cm}
 
@@ -623,7 +664,7 @@ fc |> filter(State == "VIC")  |> autoplot() + scale_y_log10()
 - All methods from `MortalityLaws` package
 - Suggestions from users
 
-\vspace*{0.5cm}
+\vspace*{0.5cm}\pause
 
 \begin{alertblock}{}
 \begin{itemize}\tightlist
