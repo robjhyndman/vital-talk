@@ -4,7 +4,7 @@ author: Rob J Hyndman
 date: 9 July 2024
 titlegraphic: bg-06.png
 toc: false
-abstract: I will introduce the vital package which allows analysis of demographic data using tidy tools. The package uses a variation of tsibble objects as the main data class, so all of the infrastructure available for tsibble and tibble objects can also be used with vital objects. Data may include births, deaths, mortality, fertility, population and migration data. Functions for plotting, smoothing, modelling and forecasting data are included. Models include the classical Lee-Carter model as well as functional data models. Future plans include replicating all of the models available in the demography and StMoMo packages. The package is currently available at pkg.robjhyndman.com/vital/ and on CRAN.
+abstract: I will introduce the vital package which allows analysis of demographic data using tidy tools. The package uses a variation of tsibble objects as the main data class, so all of the infrastructure available for tsibble and tibble objects can also be used with vital objects. Data may include births, deaths, mortality, fertility, population and migration data. Functions for plotting, smoothing, modelling and forecasting data are included. Models include the classical Lee-Carter model as well as functional data models. Future plans include replicating all of the models available in the demography and StMoMo packages. The package is available at pkg.robjhyndman.com/vital/ and on CRAN.
 format:
   presentation-beamer:
     pdf-engine: xelatex
@@ -130,7 +130,7 @@ Every row must have a unique combination of Index and Keys
 \placefig{8.3}{0}{width=2.5cm}{vital-hex}
 \alert{Australian Deaths 1901--2020}
 
-\fontsize{10}{10}\sf
+\fontsize{10}{10}\sf\vspace*{-0.05cm}
 
 ```{r}
 #| label: vital
@@ -444,14 +444,14 @@ Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
 \begin{block}{}\vspace*{-0.4cm}
 \begin{align*}
   \log(m_{t,x}) & = s_t(x) + \sigma_t(x)\varepsilon_{t,x}\\
-  s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{t,j}\phi_j(x) + e_t(x)
+  s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)
 \end{align*}
 \end{block}
 
   * $s_t(x)=$ smoothed version of $y_t(x)$
   * $\mu(x)=$ mean $s_t(x)$ across years.
-  * $\phi_j(x)$ and $\beta_{t,j}$ estimated using principal component \rlap{analysis.}
-  * $\beta_{1,j},\dots,\beta_{T,j}$ modelled with ARIMA or ARFIMA \rlap{processes.}
+  * $\phi_j(x)$ and $\beta_{tj}$ estimated using principal component \rlap{analysis.}
+  * $\beta_{1j},\dots,\beta_{Tj}$ modelled with ARIMA or ARFIMA \rlap{processes.}
 
 ## Functional data models
 \fontsize{10}{11}\sf
@@ -556,15 +556,15 @@ fit |> select(hu) |> time_components()
 \begin{block}{}\vspace*{-0.6cm}
 \begin{align*}
   y_t(x) & = s_t(x) + \sigma_t(x)\varepsilon_{t,x}\\
-  s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{t,j}\phi_j(x) + e_t(x)
+  s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)
 \end{align*}
 \end{block}
 
   * $y_t(x)= \log(m_{x,t}^Mm_{x,t}^F)$ and $\log(m_{x,t}^M/m_{x,t}^F)$
   * $s_t(x)=$ smoothed version of $y_t(x)$
   * $\mu(x)=$ mean $s_t(x)$ across years.
-  * $\phi_j(x)$ and $\beta_{t,j}$ estimated using principal component \rlap{analysis.}
-  * $\beta_{1,j},\dots,\beta_{T,j}$ modelled with ARIMA for products and ARMA for ratios (to ensure stationary sex-ratios)
+  * $\phi_j(x)$ and $\beta_{tj}$ estimated using principal component \rlap{analysis.}
+  * $\beta_{1j},\dots,\beta_{Tj}$ modelled with ARIMA for products and ARMA for ratios (to ensure stationary sex-ratios)
 
 ## Coherent functional models
 \fontsize{10}{11}\sf
@@ -605,7 +605,6 @@ fc |> filter(State == "VIC")  |> autoplot() + scale_y_log10()
 * Compute net migration from population,\newline births and deaths.
 * Compute total fertility rates from age-specific fertility rates.
 * Various smoothing functions
-* Other mortality models including functional data models, and coherent functional data models.
 
 ## Future plans
 \vspace*{-0.2cm}
