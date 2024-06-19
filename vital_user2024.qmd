@@ -9,6 +9,9 @@ format:
   presentation-beamer:
     template-partials:
         - before-title.tex
+    knitr:
+      opts_chunk:
+        dev: "CairoPDF"
 execute:
   cache: true
   echo: true
@@ -45,6 +48,8 @@ options(
   ggplot2.discrete.colour = c("#D55E00", "#0072B2","#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442"),
   ggplot2.discrete.fill = c("#D55E00", "#0072B2","#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442")
 )
+# Fira Sans font for graphics to match the main text
+ggplot2::theme_set(ggplot2::theme_get() + ggplot2::theme(text = ggplot2::element_text(family = "Fira Sans")))
 ```
 
 ## Demographic data structures in R packages
