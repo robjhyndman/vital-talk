@@ -237,7 +237,13 @@ norway_births <- read_hmd(
 \fontsize{11}{11}\sf
 
 ```{r}
+#| label: read_norway_births
+#| include: false
+norway_births <- read_hmd_files("Births.txt")
+
+```{r}
 #| label: norway_births
+#| dependson: read_norway_births
 norway_births
 ```
 
