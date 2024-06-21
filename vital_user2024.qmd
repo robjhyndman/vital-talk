@@ -264,7 +264,7 @@ life_expectancy(aus) |>
 ::: {.column width="55%"}
 
 $m_{x,t}=$ mortality rate at age $x$ in year $t$.
-\begin{block}{}\vspace*{-0.5cm}
+\begin{block}{}\vspace*{-0.65cm}
 \begin{align*}
 &\text{Naive:} & m_{x,t} &= m_{x,t-1} + \varepsilon_{x,t} \\[0.1cm]
 &\text{Lee-Carter:} & \log(m_{x,t}) &= a_x + k_t b_x + \varepsilon_{x,t}
@@ -422,7 +422,7 @@ fc |> filter(State == "NSW", .model == "lc") |>
 
 Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
 
-\begin{block}{}\vspace*{-0.4cm}
+\begin{block}{}\vspace*{-0.65cm}
 \begin{align*}
   \log(m_{t,x}) & = s_t(x) + \sigma_t(x)\varepsilon_{t,x}\\
   s_t(x) & = \mu(x) + \sum_{j=1}^{J}\beta_{tj}\phi_j(x) + e_t(x)
@@ -434,6 +434,11 @@ Let $m_{x,t}$ be the mortality rate at age $x$ in year $t$.
   * $\phi_j(x)$ and $\beta_{tj}$ estimated using principal component \rlap{analysis.}
   * $\beta_{1j},\dots,\beta_{Tj}$ modelled with ARIMA or ARFIMA \rlap{processes.}
 
+\begin{textblock}{6.2}(9.2, -0.15)
+\begin{alertblock}{}\fontsize{13}{14}\sf
+Hyndman \& Ullah (\textit{CSDA}, 2007)
+\end{alertblock}
+\end{textblock}
 
 ## Functional data models
 
@@ -536,7 +541,6 @@ fit |> age_components()
 fit |> time_components()
 ```
 
-
 ## Other functionality
 \vspace*{-0.2cm}
 \placefig{11.9}{.1}{width=3.5cm}{vital-hex}
@@ -552,7 +556,7 @@ fit |> time_components()
 \vspace*{-0.2cm}
 
 - Remaining tools from the `demography` \newline package
-- Stochastic population forecasting (as per Hyndman-Booth, IJF, 2008)
+- Stochastic population forecasting\newline (as per Hyndman & Booth, \textit{IJF}, 2008)
 - All models handled by `StMoMo` package
 - All methods from `MortalityLaws` package
 - Suggestions from users
