@@ -700,11 +700,11 @@ fc |> filter(State == "VIC")  |> autoplot() + scale_y_log10()
 
 \vspace*{10cm}
 
-\only<2->{\begin{textblock}{8.8}(0.2,5.8)
-\begin{alertblock}{}\fontsize{15}{30}\sf
-\href{https://robjhyndman.com/mpidr2024}{\raisebox{-0.1cm}{\includegraphics[width=1cm]{front}}~~ robjhyndman.com/mpidr2024}
+\only<2->{\begin{textblock}{9.1}(0.2,5.8)
+\begin{alertblock}{}\fontsize{15}{20}\sf
+\href{https://robjhyndman.com/mpidr2024}{\raisebox{-0.25cm}{\includegraphics[width=1.4cm]{front}}~~ robjhyndman.com/mpidr2024}\vspace*{0.15cm}
 
-\href{https://pkg.robjhyndman.com/vital/}{\raisebox{-0.5cm}{\includegraphics[width=1cm]{vital-hex}}~~ pkg.robjhyndman.com/vital}
+\href{https://pkg.robjhyndman.com/vital/}{\raisebox{-0.65cm}{\includegraphics[width=1.4cm]{vital-hex}}~~ pkg.robjhyndman.com/vital}
 \end{alertblock}
 \end{textblock}}
 
@@ -720,6 +720,5 @@ fc |> filter(State == "VIC")  |> autoplot() + scale_y_log10()
 \href{mailto:rob.hyndman@monash.edu}{\faicon{envelope} rob.hyndman@monash.edu}
 \end{block}
 \end{textblock}}
-
 
 \placefig{11.9}{.1}{width=3.5cm}{vital-hex}
