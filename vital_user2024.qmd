@@ -271,7 +271,19 @@ $m_{x,t}=$ mortality rate at age $x$ in year $t$.
 \end{align*}
 $\varepsilon_{x,t}=$ noise term with variance $\sigma_x^2$.
 \end{block}
-\pause\vspace*{0.3cm}
+\only<2>{\begin{textblock}{7.75}(0.65,5.4)
+\begin{block}{Lee-Carter variations}
+\begin{itemize}\tightlist
+\item Lee \& Carter (\textit{JASA} 1992)
+\item Lee \& Miller (\textit{Demography} 2001)
+\item Booth, Maindonald \& Smith (\textit{Population Studies} 2002)
+\end{itemize}
+\end{block}
+\end{textblock}
+}
+
+\pause\pause\vspace*{0.3cm}
+
 
 ```{r}
 #| label: models
@@ -553,7 +565,7 @@ fit |> time_components()
 * Coherent functional data models
 
 ## Future plans
-\vspace*{-0.2cm}
+\vspace*{-0.2cm}\fontsize{14}{15}\sf
 
 - Remaining tools from the `demography` \newline package
 - Stochastic population forecasting\newline (as per Hyndman & Booth, \textit{IJF}, 2008)
@@ -561,13 +573,27 @@ fit |> time_components()
 - All methods from `MortalityLaws` package
 - Suggestions from users
 
-\vspace*{0.5cm}\pause
+\vspace*{10cm}
 
-\begin{alertblock}{}
-\begin{itemize}\tightlist
-\item \textbf{Slides}: \href{https://robjhyndman.com/user2024}{robjhyndman.com/user2024}
-\item \textbf{Package}: \href{https://pkg.robjhyndman.com/vital/}{pkg.robjhyndman.com/vital/}
-\end{itemize}
+\only<2->{\begin{textblock}{8.8}(0.2,5.8)
+\begin{alertblock}{}\fontsize{15}{30}\sf
+\href{https://robjhyndman.com/user2024}{\raisebox{-0.1cm}{\includegraphics[width=1cm]{front}}~~ robjhyndman.com/user2024}
+
+\href{https://pkg.robjhyndman.com/vital/}{\raisebox{-0.5cm}{\includegraphics[width=1cm]{vital-hex}}~~ pkg.robjhyndman.com/vital}
 \end{alertblock}
+\end{textblock}}
+
+\only<3->{\begin{textblock}{6.1}(9.7,5.8)
+\fontsize{12}{13}\sf
+\begin{block}{Find me at ...}
+\href{https://robjhyndman.com}{\faicon{home} robjhyndman.com}
+
+\href{https://twitter.com/robjhyndman}{\faicon{twitter} @robjhyndman}
+
+\href{https://github.com/robjhyndman}{\faicon{github}  @robjhyndman}
+
+\href{mailto:rob.hyndman@monash.edu}{\faicon{envelope} rob.hyndman@monash.edu}
+\end{block}
+\end{textblock}}
 
 \placefig{11.9}{.1}{width=3.5cm}{vital-hex}
