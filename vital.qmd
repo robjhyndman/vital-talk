@@ -686,11 +686,11 @@ fc |> filter(State == "VIC")  |> autoplot() + scale_y_log10()
 
 * Convert demogdata, tsibble & data.frame\newline objects to vital.
 * Compute net migration from population,\newline births and deaths.
-* Compute total fertility rates from age-specific fertility rates.
+* Compute total fertility rates from age-specific\newline fertility rates.
 * Various smoothing functions
 
 ## Future plans
-\vspace*{-0.2cm}
+\vspace*{-0.2cm}\fontsize{14}{15}\sf
 
 - Remaining tools from the `demography` \newline package
 - Stochastic population forecasting\newline (as per Hyndman & Booth, \textit{IJF}, 2008)
@@ -698,13 +698,28 @@ fc |> filter(State == "VIC")  |> autoplot() + scale_y_log10()
 - All methods from `MortalityLaws` package
 - Suggestions from users
 
-\vspace*{0.5cm}\pause
+\vspace*{10cm}
 
-\begin{alertblock}{}
-\begin{itemize}\tightlist
-\item \textbf{Slides}: \href{https://robjhyndman.com/mpidr2024}{robjhyndman.com/mpidr2024}
-\item \textbf{Package}: \href{https://pkg.robjhyndman.com/vital/}{pkg.robjhyndman.com/vital/}
-\end{itemize}
+\only<2->{\begin{textblock}{8.8}(0.2,5.8)
+\begin{alertblock}{}\fontsize{15}{30}\sf
+\href{https://robjhyndman.com/mpidr2024}{\raisebox{-0.1cm}{\includegraphics[width=1cm]{front}}~~ robjhyndman.com/mpidr2024}
+
+\href{https://pkg.robjhyndman.com/vital/}{\raisebox{-0.5cm}{\includegraphics[width=1cm]{vital-hex}}~~ pkg.robjhyndman.com/vital}
 \end{alertblock}
+\end{textblock}}
+
+\only<3->{\begin{textblock}{6.1}(9.7,5.8)
+\fontsize{12}{13}\sf
+\begin{block}{Find me at ...}
+\href{https://robjhyndman.com}{\faicon{home} robjhyndman.com}
+
+\href{https://twitter.com/robjhyndman}{\faicon{twitter} @robjhyndman}
+
+\href{https://github.com/robjhyndman}{\faicon{github}  @robjhyndman}
+
+\href{mailto:rob.hyndman@monash.edu}{\faicon{envelope} rob.hyndman@monash.edu}
+\end{block}
+\end{textblock}}
+
 
 \placefig{11.9}{.1}{width=3.5cm}{vital-hex}
