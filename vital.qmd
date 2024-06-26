@@ -690,12 +690,13 @@ fc |> filter(State == "VIC")  |> autoplot() + scale_y_log10()
 * Various smoothing functions
 
 ## Future plans
-\vspace*{-0.2cm}\fontsize{14}{15}\sf
+\vspace*{-0.2cm}\fontsize{14}{14}\sf
 
-- Remaining tools from the `demography` \newline package
+- Remaining tools from `demography` package
 - Stochastic population forecasting\newline (as per Hyndman & Booth, \textit{IJF}, 2008)
 - All models handled by `StMoMo` package
 - All methods from `MortalityLaws` package
+- Smoothing, graduation and life table methods from `DemoTools` package
 - Suggestions from users
 
 \vspace*{10cm}
